@@ -1,0 +1,42 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Stich
+      run: |
+        python Stich.py
+  job2:
+    if: ${{ always() }}
+    needs: job1
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install requests
+    - name: DBT
+      run: |
+        python DBT.py
+  job3:
+    if: ${{ always() }}
+    needs: [job1,job2]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install requests
+    - name: Power Bi
+      run: |
+        python Power_Bi.py
